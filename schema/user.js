@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
     username : String,
-    uuid : String
+    deviceToken : String,
 }); 
   
 module.exports = mongoose.model('User', userSchema);
