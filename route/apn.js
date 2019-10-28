@@ -1,5 +1,6 @@
 var apn = require('apn')
 var fs = require('fs')
+var _auth = require('./userRole')
 
 var options = {
     token: {
@@ -13,17 +14,24 @@ var options = {
 var apnProvider = new apn.Provider(options)
 
 module.exports.sendNotification = async function(req, res){
+
+    console.log(req.body)
+
+    var userInfo = await _auth.get_user_by_name(req.body.receiver)  // Get receiver Data
+
+    console.log(userInfo)
+
     var note = new apn.Notification();
 
     note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
     note.sound = "ping.aiff";
-    note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
-    note.payload = {'messageFrom': 'John Appleseed'};
+    note.alert = req.body.sender + " is waiting you to accept call now!";
+    note.payload = {'messageFrom': req.body.sender};
     note.topic = "com.pie.hscrollview";
 
-    console.log("deviceToken => ", req.body.deviceToken)
+    console.log("deviceToken => ", userInfo.deviceToken)
 
-    apnProvider.send(note, req.body.deviceToken).then( (result) => {
+    apnProvider.send(note, userInfo.deviceToken).then( (result) => {
         // see documentation for an explanation of result
         res.status(201).json(result)
     });
