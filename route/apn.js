@@ -23,7 +23,7 @@ module.exports.sendNotification = async function(req, res){
 
     var note = new apn.Notification();
 
-    note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+    note.expiry = Math.floor(Date.now() / 1000) + 15; // Expires 15 secs from now.
     note.sound = "ping.aiff";
     note.alert = req.body.sender + " is waiting you to accept call now!";
     note.payload = {'messageFrom': req.body.sender};

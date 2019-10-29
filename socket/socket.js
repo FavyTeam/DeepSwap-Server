@@ -4,6 +4,8 @@ module.exports = {
     connect : function(io, PORT){
         var rooms = {}
         var users = {}
+        var timer1 = null
+        var timer2 = null
 
         io.on('connection', (socket) => {
 
@@ -50,7 +52,9 @@ module.exports = {
                     var userInfo = users[i]
 
                     if (userInfo.userData._id === room.receiver_id){
-                        userInfo.socketData.emit('ask_join', room)
+                        timer1 = setInterval(function(){
+                            userInfo.socketData.emit('ask_join', room)  // ask join serveral times every 500ms
+                        }, 500)
                         return
                     }
                 }
@@ -63,15 +67,32 @@ module.exports = {
 
             socket.on('join_meeting', function(room){
                 console.log('join room: ', room.key)
-                
-                for (var i =0; i < users.length; i++){
-                    var userInfo = users[i]
 
-                    if (userInfo.userData._id === room.sender_id){
-                        userInfo.socketData.emit('joined', room)
-                        return
+                clearInterval(timer1)   // Stop send messages
+
+                if (rooms[room.key] == undefined){
+                    // Room is closed
+                    for (var i =0; i < users.length; i++){
+                        var userInfo = users[i]
+    
+                        if (userInfo.userData._id === room.sender_id){
+                            userInfo.socketData.emit('closed')
+                        }
+                        if (userInfo.userData._id === room.receiver_id){
+                            userInfo.socketData.emit('closed')
+                        }
                     }
-                }                
+                }else{
+                    // Awaiting video call
+                    for (var i =0; i < users.length; i++){
+                        var userInfo = users[i]
+    
+                        if (userInfo.userData._id === room.sender_id){
+                            userInfo.socketData.emit('joined', room)
+                            return
+                        }
+                    }
+                }
             })
 
 
