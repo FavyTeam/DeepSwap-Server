@@ -15,7 +15,9 @@ module.exports.auth = async function(req, res){
     for (let i = 0; i < _info.length; i++){
         let doc = _info[i]
 
-        if (doc.username === _username && doc.deviceToken === _deviceToken){
+        if (doc.username === _username){
+            let result = await update_deviceToken(_username, _deviceToken)
+            doc.deviceToken = _deviceToken
             res.status(201).json(doc)
             return
         }
@@ -43,6 +45,22 @@ function get_all_users(){
     return new Promise(function(resolve, reject){
         UserSchema.find({},function(err, docs){
             resolve(docs)
+        })
+    })
+}
+
+function update_deviceToken(_username, _deviceToken){
+    return new Promise(function(resolve, reject){
+        var data = {
+            "deviceToken" : _deviceToken
+        }
+    
+        var query = {'username' : _username}
+    
+        UserSchema.update(query, data, function(err, doc){
+            if (err) res.status(401).json(err)
+    
+            resolve(doc)
         })
     })
 }
