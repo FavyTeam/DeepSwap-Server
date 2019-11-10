@@ -62,7 +62,7 @@ module.exports.add = function(req, res){
 }
 
 module.exports.get = function(req, res){
-    UserSchema.findOne({'_id' : req.body._id}, function (err, doc){
+    UserSchema.findOne({'username' : req.body.username}, function (err, doc){
         if (err) res.status(401).json(err)
         
         res.status(201).json(doc)

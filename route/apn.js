@@ -4,8 +4,8 @@ var _auth = require('./userRole')
 
 var options = {
     token: {
-      key: fs.readFileSync('./certification/AuthKey_CPC79T65QP.p8'),
-      keyId: "CPC79T65QP",
+      key: fs.readFileSync('./certification/AuthKey_N6V27S8R5R.p8'),
+      keyId: "N6V27S8R5R",
       teamId: "GU3Z9XQ7M6"
     },
     production: false
